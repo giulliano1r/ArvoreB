@@ -3,8 +3,11 @@
 
 #include <stdint.h>
 
-union ou struct nodo {
-  //defina
+struct nodo {
+    int n;
+    int chaves[2 * GRAU_MINIMO - 1];
+    struct nodo *filhos[2 * GRAU_MINIMO];
+    bool ehFolha;
 };
 
 struct arvoreB {
