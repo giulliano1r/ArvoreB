@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include "arvoreB.h"
 #include "fila.h"
-#include "fila.c"
 
 void verifica_erro(void *ptr)
 {
@@ -118,7 +117,10 @@ void imprimirArvoreB(struct arvoreB* arvore)
 {
 
     if(arvore == nullptr || arvore->raiz == nullptr)
+    {
+        printf("Não encontrou, arvore nula");
         return;
+    }
 
     struct fila_t *fila;
     struct nodo *nodo_atual;
@@ -257,6 +259,7 @@ void deletarArvore(struct arvoreB* arvore)
 
     deleta_nodo(arvore->raiz);
     free(arvore);
+    
 }
 
 int main()
@@ -280,16 +283,18 @@ int main()
     imprimirArvoreB(a);
     imprimirEmOrdem(a);
 
-    int32_t *i;
-    struct nodo *buscaAB = buscarArvoreB(a,79,i);
+    int32_t i;
+    struct nodo *buscaAB = buscarArvoreB(a,79,&i);
 
     if(buscaAB)
-        printf("\n encontrou o %d no indice %d \n", x, *i );
+        printf("\n encontrou o %d no indice %d \n", x, i );
     else
         printf("\n nao encontrou\n");
 
     deletarArvore(a);
+    a = nullptr;
     imprimirArvoreB(a);
+  
 
     return 0;
 }
