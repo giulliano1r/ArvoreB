@@ -173,7 +173,27 @@ void imprimirArvoreB(struct arvoreB* arvore)
     free(fila);
 
 }
-void imprimirEmOrdem(struct arvoreB* arvore); // eu
+
+void imprimirEmOrdemRecursivamente(struct nodo* no)
+{
+    for(int i = 0; i <= no->n; i++)
+    {
+        if(no->ehFolha == false)
+            imprimirEmOrdemRecursivamente(no->filhos[i]);
+
+        if(i < no->n)
+            printf(" %d", no->chaves[i]);
+    }
+}
+
+void imprimirEmOrdem(struct arvoreB* arvore)
+{
+    verifica_erro(arvore);
+
+    printf("Em ordem:");
+    imprimirEmOrdemRecursivamente(arvore->raiz);
+    printf("\n");
+}
 
 struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave,
                           int32_t* idxEncontrado); // eu
@@ -212,10 +232,11 @@ int main()
     inserirArvoreB(a, 7);
     inserirArvoreB(a, 73);
     inserirArvoreB(a, 72);
-    inserirArvoreB(a, 3);
+    inserirArvoreB(a, 71);
     inserirArvoreB(a, 2);
     inserirArvoreB(a, 1);
     imprimirArvoreB(a);
+    imprimirEmOrdem(a);
 
     return 0;
 }
