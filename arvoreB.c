@@ -1,8 +1,9 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include "arvoreB.h"
 #include "fila.h"
+#include "fila.c"
 
 void verifica_erro(void *ptr)
 {
@@ -113,7 +114,6 @@ void inserirArvoreB(struct arvoreB* arvore, int32_t chave)
         inserirNaoCheio(r,chave,t);
 }
 
-
 void imprimirArvoreB(struct arvoreB* arvore)
 {
 
@@ -123,11 +123,11 @@ void imprimirArvoreB(struct arvoreB* arvore)
     struct fila_t *fila;
     struct nodo *nodo_atual;
     int32_t nivel = 0;
-    fila = cria_fila();
+    fila = fila_cria();
 
-    fila_insere(arvore, arvore->raiz);
-    
-    while(fila->num > 0) 
+    fila_insere(fila, arvore->raiz);
+
+    while(fila->num > 0)
     {
         printf("----//----\n");
         printf("Nível %d\n", nivel);
@@ -136,7 +136,7 @@ void imprimirArvoreB(struct arvoreB* arvore)
         //mostra quantos nós tem no nível
         int32_t nos = fila->num;
 
-        for (int32_t j = 0; j<nos; j++) 
+        for (int32_t j = 0; j<nos; j++)
         {
             nodo_atual = fila_retira(fila);
 
@@ -171,11 +171,13 @@ void imprimirArvoreB(struct arvoreB* arvore)
 
     printf("----//----\n");
     free(fila);
-  
+
 }
 void imprimirEmOrdem(struct arvoreB* arvore); // eu
+
 struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave,
                           int32_t* idxEncontrado); // eu
+
 static void deleta_nodo(struct nodo *n)
 {
     if(n == nullptr)
@@ -186,15 +188,34 @@ static void deleta_nodo(struct nodo *n)
         for(int32_t i = 0; i <= n->n; i++)
             deleta_nodo(n->filhos[i]);
     }
- 
+
     free(n);
 
 }
-void deletarArvore(struct arvoreB* arvore) 
+void deletarArvore(struct arvoreB* arvore)
 {
     if(arvore == nullptr)
         return;
 
     deleta_nodo(arvore->raiz);
     free(arvore);
+}
+
+int main()
+{
+    struct arvoreB *a = criarArvoreB(5);
+    inserirArvoreB(a, 10);
+    inserirArvoreB(a, 13);
+    inserirArvoreB(a, 14);
+    inserirArvoreB(a, 9);
+    inserirArvoreB(a, 8);
+    inserirArvoreB(a, 7);
+    inserirArvoreB(a, 73);
+    inserirArvoreB(a, 72);
+    inserirArvoreB(a, 3);
+    inserirArvoreB(a, 2);
+    inserirArvoreB(a, 1);
+    imprimirArvoreB(a);
+
+    return 0;
 }

@@ -1,18 +1,18 @@
 #ifndef FILA
 #define FILA
-#include "arvoreb.h"
+#include "arvoreB.h"
 
 struct fila_nodo_t
 {
-	struct nodo *arvore;					
-	struct fila_nodo_t *prox;	
+	struct nodo *arvore;
+	struct fila_nodo_t *prox;
 };
 
 struct fila_t
 {
-	struct fila_nodo_t *prim ;	
-	struct fila_nodo_t *ult ;	
-	int num ;					
+	struct fila_nodo_t *prim ;
+	struct fila_nodo_t *ult ;
+	int num ;
 };
 
 //Cria uma fila vazia, retorna a fila ou nulo se deu erro

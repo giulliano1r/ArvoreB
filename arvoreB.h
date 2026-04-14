@@ -1,6 +1,6 @@
 #ifndef ARVORE_B_H_
 #define ARVORE_B_H_
-#define GRAU_MINIMO
+#define GRAU_MINIMO 2
 
 #include <stdint.h>
 
