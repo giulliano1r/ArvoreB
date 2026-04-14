@@ -288,5 +288,8 @@ int main()
     else
         printf("\n nao encontrou\n");
 
+    deletarArvore(a);
+    imprimirArvoreB(a);
+
     return 0;
 }

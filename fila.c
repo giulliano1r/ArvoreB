@@ -36,21 +36,21 @@ void fila_insere (struct fila_t *f, struct nodo *n)
     }
 
     novo->arvore = n;
-    novo->prox = NULL;
+    novo->prox = nullptr;
 
     // caso a fila esteja vazia
     if(f->prim == nullptr)
     {
         f->prim = novo;
-        f->ult = novo;  
+        f->ult = novo;
     }
-    
+
     else
     {
         f->ult->prox = novo;
         f->ult = novo;
     }
-    
+
     f->num++;
     return;
 }
@@ -59,7 +59,7 @@ struct nodo *fila_retira (struct fila_t *f)
 {
 
     if(f == nullptr || f->num == 0)
-        return NULL;
+        return nullptr;
 
     struct fila_nodo_t *temp = f->prim;
     struct nodo *retorno = temp->arvore;
@@ -69,11 +69,10 @@ struct nodo *fila_retira (struct fila_t *f)
     // se a fila ficou vazia
     if(f->num == 0)
     {
-        f->ult = NULL;
-        f->prim = NULL;
+        f->ult = nullptr;
+        f->prim = nullptr;
     }
 
+    free(temp);
     return retorno;
 }
-
-
