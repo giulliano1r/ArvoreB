@@ -195,8 +195,45 @@ void imprimirEmOrdem(struct arvoreB* arvore)
     printf("\n");
 }
 
-struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave,
-                          int32_t* idxEncontrado); // eu
+int32_t percorreNodo(struct nodo *no, int32_t chave)
+{
+    int32_t indice = 0;
+
+    while (indice < no->n && chave > no->chaves[indice])
+        indice++;
+
+    return indice;
+}
+
+struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave, int32_t *idxEncontrado)
+{
+    if(arvore == NULL || arvore->raiz == NULL)
+    {
+        *idxEncontrado = -1;
+        return nullptr;
+    }
+    struct nodo *no = arvore->raiz;
+
+    while(no != nullptr)
+    {
+        int32_t indice = percorreNodo(no,chave);
+
+        if(indice < no->n && no->chaves[indice] == chave)
+        {
+            *idxEncontrado = indice;
+            return no;
+        }
+        if( no->ehFolha)
+        {
+            *idxEncontrado = -1;
+            return nullptr;
+        }
+
+        no = no->filhos[indice];
+    }
+    *idxEncontrado = -1;
+    return nullptr;
+}
 
 static void deleta_nodo(struct nodo *n)
 {
@@ -212,6 +249,7 @@ static void deleta_nodo(struct nodo *n)
     free(n);
 
 }
+
 void deletarArvore(struct arvoreB* arvore)
 {
     if(arvore == nullptr)
@@ -223,6 +261,8 @@ void deletarArvore(struct arvoreB* arvore)
 
 int main()
 {
+    int x = 72;
+
     struct arvoreB *a = criarArvoreB(5);
     inserirArvoreB(a, 10);
     inserirArvoreB(a, 13);
@@ -231,12 +271,22 @@ int main()
     inserirArvoreB(a, 8);
     inserirArvoreB(a, 7);
     inserirArvoreB(a, 73);
-    inserirArvoreB(a, 72);
+    inserirArvoreB(a, x);
+    inserirArvoreB(a, x);
+    inserirArvoreB(a, x);
     inserirArvoreB(a, 71);
     inserirArvoreB(a, 2);
     inserirArvoreB(a, 1);
     imprimirArvoreB(a);
     imprimirEmOrdem(a);
+
+    int32_t *i;
+    struct nodo *buscaAB = buscarArvoreB(a,79,i);
+
+    if(buscaAB)
+        printf("\n encontrou o %d no indice %d \n", x, *i );
+    else
+        printf("\n nao encontrou\n");
 
     return 0;
 }
