@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include <stdint.h>
 #include "arvoreB.h"
 #include "fila.h"
 
@@ -13,17 +14,21 @@ void verifica_erro(void *ptr)
 }
 struct arvoreB* criarArvoreB(int32_t t_arvore)
 {
-    struct nodo *novaArvore;
-    novaArvore = malloc(sizeof(t_arvore));
+    struct arvoreB *arvore = malloc(sizeof(struct arvoreB));
+    verifica_erro(arvore);
+    struct nodo *novaArvore = malloc(sizeof(struct nodo));
     verifica_erro(novaArvore);
 
     novaArvore->n = 0;
     novaArvore->ehFolha = true;
 
-     for(int i = 0; i < 2 * GRAU_MINIMO; i++)
+     for(int32_t i = 0; i < 2 * GRAU_MINIMO; i++)
         novaArvore->filhos[i] = nullptr;
 
-    return novaArvore;
+    arvore->raiz = novaArvore;
+    arvore->t_arvore = t_arvore;
+
+    return arvore;
 }
 
 void dividirFilho(struct nodo *no, int32_t indice, int32_t t)
@@ -36,7 +41,7 @@ void dividirFilho(struct nodo *no, int32_t indice, int32_t t)
     z->n = t - 1;
 
     for(int32_t i = 0; i < t - 1; i++)
-        z->chave[i] = y->chave[i+t];
+        z->chaves[i] = y->chaves[i+t];
 
     if(y->ehFolha == false)
         for(int32_t i = 0; i < t; i++)
@@ -61,33 +66,33 @@ void inserirNaoCheio(struct nodo *no, int32_t chave, int32_t t)
     int32_t i = no->n -1;
     if(no->ehFolha == true)
     {
-        while(i >= 1  && chave < no->chaves[i])
+        while(i >= 0  && chave < no->chaves[i])
         {
             no->chaves[i + 1] = no->chaves[i];
             i--;
         }
         no->chaves[i + 1] = chave;
-        x->n = x->n + 1;
+        no->n = no->n + 1;
     }
     else
     {
-        while(i >= 1 && chave < no->chaves[i])
+        while(i >= 0 && chave < no->chaves[i])
             i--;
         i++;
         if(no->filhos[i]->n == (2 * t) - 1)
         {
             dividirFilho(no,i,t);
-            if(chave > nodo->chaves[i])
+            if(chave > no->chaves[i])
                 i++;
         }
-        inserirNaoCheio(no->filhos[i],chave, t;)
+        inserirNaoCheio(no->filhos[i],chave, t);
     }
 }
 
 void inserirArvoreB(struct arvoreB* arvore, int32_t chave)
 {
     struct nodo *r = arvore->raiz;
-    int t = arvore->t_arvore;
+    int32_t t = arvore->t_arvore;
 
     if(r->n == (2 * t) - 1)
     {
@@ -99,12 +104,13 @@ void inserirArvoreB(struct arvoreB* arvore, int32_t chave)
         s->ehFolha = false;
         s->n = 0;
         s->filhos[0] = r;
+        //arvore->raiz = s;
 
         dividirFilho(s,0,t);
-        inserirNaoCheio(s,chave);
+        inserirNaoCheio(s,chave, t);
     }
     else
-        inserirNaoCheio(r,chave);
+        inserirNaoCheio(r,chave,t);
 }
 
 
@@ -152,11 +158,11 @@ void imprimirArvoreB(struct arvoreB* arvore)
             if(j<nos -1)
                 printf(" ");
 
-            if(nodo_atual->ehFolha == nullptr)
+            if(!nodo_atual->ehFolha)
             {
                 for (int32_t k = 0; k<= nodo_atual->n; k++)
-                    if(nodo_atual->filhos[j] != nullptr)
-                        fila_insere(fila, nodo_atual->filhos[j]);
+                    if(nodo_atual->filhos[k] != nullptr)
+                        fila_insere(fila, nodo_atual->filhos[k]);
             }
         }
         printf("\n");
@@ -180,6 +186,9 @@ static void deleta_nodo(struct nodo *n)
         for(int32_t i = 0; i <= n->n; i++)
             deleta_nodo(n->filhos[i]);
     }
+ 
+    free(n);
+
 }
 void deletarArvore(struct arvoreB* arvore) 
 {
