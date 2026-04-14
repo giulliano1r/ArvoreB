@@ -118,7 +118,7 @@ void imprimirArvoreB(struct arvoreB* arvore)
 
     if(arvore == nullptr || arvore->raiz == nullptr)
     {
-        printf("Não encontrou, arvore nula");
+        printf("Arvore nula\n");
         return;
     }
 
@@ -127,8 +127,10 @@ void imprimirArvoreB(struct arvoreB* arvore)
     int32_t nivel = 0;
     fila = fila_cria();
 
+    //enfileira o primeiro filho para a fila
     fila_insere(fila, arvore->raiz);
 
+    //enquanto há nodos na fila
     while(fila->num > 0)
     {
         printf("----//----\n");
@@ -140,6 +142,7 @@ void imprimirArvoreB(struct arvoreB* arvore)
 
         for (int32_t j = 0; j<nos; j++)
         {
+            //desenfileira a fila
             nodo_atual = fila_retira(fila);
 
             char tipo;
@@ -149,6 +152,7 @@ void imprimirArvoreB(struct arvoreB* arvore)
                 tipo = 'I';
 
             printf("%c  (n:%d) [", tipo, nodo_atual->n);
+            //imprime todas as chaves do nodo
             for(int32_t i = 0; i <nodo_atual->n; i++)
             {
                 printf("%d", nodo_atual->chaves[i]);
@@ -157,9 +161,11 @@ void imprimirArvoreB(struct arvoreB* arvore)
             }
             printf("]");
 
+            //caso ainda haja mais nodos, imprime um espaço a mais
             if(j<nos -1)
                 printf(" ");
 
+            //se o nodo eh interno, insere os nodos dilhos em ordem na fila
             if(!nodo_atual->ehFolha)
             {
                 for (int32_t k = 0; k<= nodo_atual->n; k++)
@@ -178,7 +184,7 @@ void imprimirArvoreB(struct arvoreB* arvore)
 
 void imprimirEmOrdemRecursivamente(struct nodo* no)
 {
-    for(int i = 0; i <= no->n; i++)
+    for(int32_t i = 0; i <= no->n; i++)
     {
         if(no->ehFolha == false)
             imprimirEmOrdemRecursivamente(no->filhos[i]);
@@ -237,11 +243,13 @@ struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave, int32_t *idxEn
     return nullptr;
 }
 
+//garante que essa função so eh vista no arvoreB.c
 static void deleta_nodo(struct nodo *n)
 {
     if(n == nullptr)
         return;
 
+    //se o nodo nao eh folha, a função desce até a folha e deleta recursivamente
     if(!n->ehFolha)
     {
         for(int32_t i = 0; i <= n->n; i++)
@@ -262,39 +270,3 @@ void deletarArvore(struct arvoreB* arvore)
     
 }
 
-int main()
-{
-    int x = 72;
-
-    struct arvoreB *a = criarArvoreB(5);
-    inserirArvoreB(a, 10);
-    inserirArvoreB(a, 13);
-    inserirArvoreB(a, 14);
-    inserirArvoreB(a, 9);
-    inserirArvoreB(a, 8);
-    inserirArvoreB(a, 7);
-    inserirArvoreB(a, 73);
-    inserirArvoreB(a, x);
-    inserirArvoreB(a, x);
-    inserirArvoreB(a, x);
-    inserirArvoreB(a, 71);
-    inserirArvoreB(a, 2);
-    inserirArvoreB(a, 1);
-    imprimirArvoreB(a);
-    imprimirEmOrdem(a);
-
-    int32_t i;
-    struct nodo *buscaAB = buscarArvoreB(a,79,&i);
-
-    if(buscaAB)
-        printf("\n encontrou o %d no indice %d \n", x, i );
-    else
-        printf("\n nao encontrou\n");
-
-    deletarArvore(a);
-    a = nullptr;
-    imprimirArvoreB(a);
-  
-
-    return 0;
-}

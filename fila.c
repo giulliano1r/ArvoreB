@@ -63,10 +63,12 @@ struct nodo *fila_retira (struct fila_t *f)
 
     struct fila_nodo_t *temp = f->prim;
     struct nodo *retorno = temp->arvore;
+
+    //o primeiro da fila se torna o proximo
     f->prim = f->prim->prox;
     f->num--;
 
-    // se a fila ficou vazia
+    // se a fila ficou vazia, primeiro e ultimo são nulos
     if(f->num == 0)
     {
         f->ult = nullptr;
