@@ -1,7 +1,7 @@
 
 CC = gcc
-CFLAGS = -std=c2x -Wall -Wextra -Werror
-TARGET = programa
+CFLAGS = -std=c23 -Wall -Wextra -Werror
+TARGET = prova1_20244503_
 OBJS = arvoreB.o fila.o main.o
 
 # compilae gera o executavel
