@@ -3,6 +3,9 @@
 #define GRAU_MINIMO 2
 
 #include <stdint.h>
+
+//COMPATIBILIDADE COM O C23: Remover as duas linhas de código abaixo 
+//(#include <stdbool.h> e #define nullptr NULL), pois já são nativas do c23
 #include <stdbool.h>
 #define nullptr NULL
 
