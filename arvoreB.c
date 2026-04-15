@@ -31,86 +31,112 @@ struct arvoreB* criarArvoreB(int32_t t_arvore)
     return arvore;
 }
 
+// funcao responsavel pelo processo que envolve a divisao de um no cheio.
 void dividirFilho(struct nodo *no, int32_t indice, int32_t t)
 {
     struct nodo *y = no->filhos[indice];
+
+    // criamos um novo nodo para poder fazer a divisao.
     struct nodo *z = malloc(sizeof(struct nodo));
     verifica_erro(z);
 
+    // garantimos que eles estejam no mesmo nivel para ser uma arvoreb.
     z->ehFolha = y->ehFolha;
     z->n = t - 1;
 
+    // transferimos metade das chaves de y para o novo nodo.
     for(int32_t i = 0; i < t - 1; i++)
         z->chaves[i] = y->chaves[i+t];
 
+    // fazemos a mesma coisa com os filhos para caso y nao seja folha.
     if(y->ehFolha == false)
         for(int32_t i = 0; i < t; i++)
             z->filhos[i] = y->filhos[i+t];
 
     y->n = t - 1;
 
+    // para o pai conseguir apontar para z, liberamos espaco no vetor de filhos
+    // de no do final ate a posicao indicada.
     for(int32_t i = (no->n + 1); i > indice + 1; i--)
-        no->filhos[i+1] = no->filhos[i];
+        no->filhos[i + 1] = no->filhos[i];
 
+    //entao conectamos o pai(no) com o novo nodo(z)
     no->filhos[indice + 1] = z;
 
+    // aqui fazemos o deslocamento necessario para subir para o pai a chave
+    // que vai ser a divisora entre o nodo existente e o novo.
     for(int32_t i = no->n; i > indice; i--)
         no->chaves[i+1] = no->chaves[i];
 
+    // aqui subimos a chave do meio para o espaco reservado no pai.
     no->chaves[indice] = y->chaves[t - 1];
     no->n = no->n + 1;
 }
 
+// funcao responsavel por inserir uma chave na arvore.
 void inserirNaoCheio(struct nodo *no, int32_t chave, int32_t t)
 {
     int32_t i = no->n -1;
+    // caso 1 : inserir na folha.
     if(no->ehFolha == true)
     {
+        // abrimos espaco para no vetor de chaves para insercao da chave.
         while(i >= 0  && chave < no->chaves[i])
         {
             no->chaves[i + 1] = no->chaves[i];
             i--;
         }
+        // inserimos na posicao reservada no while.
         no->chaves[i + 1] = chave;
         no->n = no->n + 1;
     }
     else
     {
+        // caso 2 : nao e folha
+
+        // precisamos encontrar em qual filho a nossa chave deve ser inserida.
         while(i >= 0 && chave < no->chaves[i])
             i--;
         i++;
+        // se o filho indicado para insercao estiver cheio, aplicamos dividirFilho()
+        // para liberar espaco necessario.
         if(no->filhos[i]->n == (2 * t) - 1)
         {
             dividirFilho(no,i,t);
             if(chave > no->chaves[i])
                 i++;
         }
+
+        // vamos descendo dentro dos filhos até encontrar uma folha.
         inserirNaoCheio(no->filhos[i],chave, t);
     }
 }
 
+// funcao responsavel por gerenciar os casos de insercao.
 void inserirArvoreB(struct arvoreB* arvore, int32_t chave)
 {
     struct nodo *r = arvore->raiz;
     int32_t t = arvore->t_arvore;
 
+    // caso 1 : raiz cheia -> logo precisamos dividir.
     if(r->n == (2 * t) - 1)
     {
-        // quando esta tudo cheio entao a raiz sobe :
+        // quando esta tudo cheio entao a raiz sobe.
         struct nodo *s = malloc(sizeof(struct nodo));
         verifica_erro(s);
 
+        // criamos a nova raiz.
         arvore->raiz = s;
         s->ehFolha = false;
         s->n = 0;
         s->filhos[0] = r;
-        //arvore->raiz = s;
 
+        // divide o nodo cheio entao insere normalmente.
         dividirFilho(s,0,t);
         inserirNaoCheio(s,chave, t);
     }
     else
-        inserirNaoCheio(r,chave,t);
+        inserirNaoCheio(r,chave,t); // caso 2 : insere normalmente pois existe espaco.
 }
 
 void imprimirArvoreB(struct arvoreB* arvore)
@@ -186,9 +212,11 @@ void imprimirEmOrdemRecursivamente(struct nodo* no)
 {
     for(int32_t i = 0; i <= no->n; i++)
     {
+        // desce para esquerda até encontrar uma folha.
         if(no->ehFolha == false)
             imprimirEmOrdemRecursivamente(no->filhos[i]);
 
+        // imprime a atual e volta recursivamente imprimindo da esquerda para direita da arvore.
         if(i < no->n)
             printf(" %d", no->chaves[i]);
     }
@@ -203,10 +231,12 @@ void imprimirEmOrdem(struct arvoreB* arvore)
     printf("\n");
 }
 
+// retorna o indice exato de uma chave dentro de um no.
 int32_t percorreNodo(struct nodo *no, int32_t chave)
 {
     int32_t indice = 0;
 
+    // vai avancar até encontrar a chave que seja menor que a chave de algum no.
     while (indice < no->n && chave > no->chaves[indice])
         indice++;
 
@@ -224,19 +254,24 @@ struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave, int32_t *idxEn
 
     while(no != nullptr)
     {
+        // para nao percorrer a arvore toda, diminuimos nosso escopo, encontrando
+        // o indice provavel que a nossa chave se enconta dentro de um nodo.
         int32_t indice = percorreNodo(no,chave);
 
+        // verifica se na posicao provavel encontramos a chave que estavamos buscando.
         if(indice < no->n && no->chaves[indice] == chave)
         {
             *idxEncontrado = indice;
             return no;
         }
+        // se é folha entao encerramos a busca sem sucesso, retornando -1.
         if( no->ehFolha)
         {
             *idxEncontrado = -1;
             return nullptr;
         }
 
+        // tentamos mais uma vez para o filho para caso nao tenhamos encontrado nem é folha.
         no = no->filhos[indice];
     }
     *idxEncontrado = -1;
@@ -267,6 +302,5 @@ void deletarArvore(struct arvoreB* arvore)
 
     deleta_nodo(arvore->raiz);
     free(arvore);
-    
-}
 
+}
