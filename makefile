@@ -1,7 +1,7 @@
 
 CC = gcc
 CFLAGS = -std=c23 -Wall -Wextra -Werror
-TARGET = prova1_20244503_
+TARGET = prova1_20244503_20245106
 OBJS = arvoreB.o fila.o main.o
 
 # compilae gera o executavel

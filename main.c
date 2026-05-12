@@ -36,7 +36,5 @@ int main()
     deletarArvore(a);
     a = nullptr;
     imprimirArvoreB(a);
-  
-
     return 0;
 }
