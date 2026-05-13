@@ -304,3 +304,92 @@ void deletarArvore(struct arvoreB* arvore)
     free(arvore);
 
 }
+
+//encontra o maior numero dos filhos
+static int encontrarPred(struct nodo *pred)
+{
+
+}
+
+//encontra o menor numero dos filhos
+static int encontrarSuc(struct nodo *suc)
+{
+
+}
+
+//remove o numero de um vetor, diminui o numero de chaved do nodo (parametro n)
+static void remove_vetor(int32_t vetor[], int32_t chave, int *n )
+{
+
+}
+
+//faz o merge de dois nodos
+static void merge( struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t);
+
+void excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
+{
+    if(arvore == nullptr || x == nullptr)
+    {
+        printf("Arvore nula\n");
+        return;
+    }
+
+    int32_t i = 0;
+
+    while ( i<= x->n && chave > x->chaves[i])
+    {
+        i++;
+    }
+
+    if(i <= x->n && chave == x->chaves[i]) // achou a chave
+    {
+        if(x->filhos == nullptr) // se for uma folha
+        {
+            remove_vetor(x->chaves, chave, &x->n);
+            return;
+        }
+        else
+        {
+            if(x->filhos[i]->n >= arvore->t_arvore)
+            {
+                int32_t pred;  //guarda o predecessor do numero
+                pred = encontrarPred(x->filhos[i]);
+                x->chaves[i] = pred; 
+                return excluirArvoreB(arvore, x->filhos[i], pred);
+            }
+            else
+            {
+                if(x->filhos[i+1]->n >= arvore->t_arvore)
+                {
+                    int32_t suc;
+                    suc = encontrarSuc(x->filhos[i+1]);
+                    x->chaves[i] = suc;
+                    return excluirArvoreB(arvore, x->filhos[i+1], suc);
+                }
+                else
+                {
+                    remove_vetor(x->chaves, chave, &x->n);
+                    merge(x->filhos[i], x->filhos[i+1], chave, arvore->t_arvore);
+                    deleta_nodo(x->filhos[i+1]);
+                    excluirArvoreB(arvore, x->filhos[i], chave);
+
+                    if(x->n < 1)
+                    {
+                        arvore->raiz = x->filhos[0];
+                        deleta_nodo(x);
+                    }
+                    return;
+                }
+            }
+        }
+
+
+    }
+    else //chave nao encontrada
+    {
+        if(x->chaves == nullptr)
+            return;
+    }
+
+    return excluirArvoreB(arvore, x->filhos[i], chave);
+}
