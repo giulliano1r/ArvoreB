@@ -324,14 +324,33 @@ static void remove_vetor(int32_t vetor[], int32_t chave, int *n )
 }
 
 //faz o merge de dois nodos
-static void merge( struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t);
+static void merge( struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t)
+{
 
-void excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
+}
+
+static void incluir_vetor (int32_t chaves[], struct nodo *filhos[])
+{
+
+}
+
+bool removerChaveArvoreB(struct arvoreB* arvore, int32_t chave)
+{
+    if(!arvore || !arvore->raiz)
+    {
+        printf("Arvore nula\n");
+        return false;
+    }
+
+    excluirArvoreB(arvore, arvore->raiz, chave);
+}
+
+int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
 {
     if(arvore == nullptr || x == nullptr)
     {
         printf("Arvore nula\n");
-        return;
+        return 0;
     }
 
     int32_t i = 0;
@@ -341,23 +360,23 @@ void excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
         i++;
     }
 
-    if(i <= x->n && chave == x->chaves[i]) // achou a chave
+    if(i < x->n && chave == x->chaves[i]) // achou a chave, não tem só ela no vetor
     {
-        if(x->filhos == nullptr) // se for uma folha
+        if(x->filhos == nullptr) // se for uma folha, só remove a chave do vetor
         {
             remove_vetor(x->chaves, chave, &x->n);
-            return;
+            return 1;
         }
-        else
+        else //eh um nó interno
         {
-            if(x->filhos[i]->n >= arvore->t_arvore)
+            if(x->filhos[i]->n >= arvore->t_arvore) //o filho esquerdo tem o numero minimo de chaves
             {
                 int32_t pred;  //guarda o predecessor do numero
                 pred = encontrarPred(x->filhos[i]);
                 x->chaves[i] = pred; 
                 return excluirArvoreB(arvore, x->filhos[i], pred);
             }
-            else
+            else //o filho direito tem o numero minimo de chaves
             {
                 if(x->filhos[i+1]->n >= arvore->t_arvore)
                 {
@@ -366,7 +385,7 @@ void excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
                     x->chaves[i] = suc;
                     return excluirArvoreB(arvore, x->filhos[i+1], suc);
                 }
-                else
+                else // nenhum dos filhos tem o numero minimo de chaves
                 {
                     remove_vetor(x->chaves, chave, &x->n);
                     merge(x->filhos[i], x->filhos[i+1], chave, arvore->t_arvore);
@@ -378,17 +397,42 @@ void excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
                         arvore->raiz = x->filhos[0];
                         deleta_nodo(x);
                     }
-                    return;
+                    return 1;
                 }
             }
         }
 
 
     }
-    else //chave nao encontrada
+    else //chave nao encontrada ou a chave é única
     {
         if(x->chaves == nullptr)
-            return;
+            return 0;
+        else
+        {
+            if(x->filhos[i]->n <= arvore->t_arvore)
+            {
+                struct nodo *b;
+                b = irmaoImediatoComMaisChaves(x, i);
+                if(b->n >= arvore->t_arvore)
+                {
+                    incluir_vetor(x->chaves[i], x->filhos[i]);
+                    if(b == x->filhos[i+1])
+                    {
+                        incluir_vetor(); // nao entendi essa parte ainda ayuda
+                    }
+                    else
+                    {
+                        incluir_vetor(); //tambem nao entend ayuda
+                    }
+                }
+                else
+                {
+                    merge(x->filhos[i], )
+                }
+
+            }
+        }
     }
 
     return excluirArvoreB(arvore, x->filhos[i], chave);

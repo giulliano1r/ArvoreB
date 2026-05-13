@@ -26,6 +26,7 @@ void inserirArvoreB(struct arvoreB* arvore, int32_t chave);
 void imprimirArvoreB(struct arvoreB* arvore);
 void imprimirEmOrdem(struct arvoreB* arvore);
 struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave, int32_t* idxEncontrado);
+bool removerChaveArvoreB(union ou struct arvoreB* arvore, int32_t chave);
 void deletarArvore(struct arvoreB* arvore);
 
 #endif
