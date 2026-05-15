@@ -308,13 +308,24 @@ void deletarArvore(struct arvoreB* arvore)
 //encontra o maior numero dos filhos
 static int encontrarPred(struct nodo *pred)
 {
+    if(pred == nullptr)
+        return -1;
+
+    while(!pred->ehFolha)
+        pred = pred->filhos[pred->n];
+    return pred->chaves[pred->n - 1]; // pegamos o ultimo elemento do vetor de chaves
 
 }
 
 //encontra o menor numero dos filhos
 static int encontrarSuc(struct nodo *suc)
 {
+    if(suc == nullptr)
+        return -1;
 
+    while(!suc->ehFolha)
+        suc = suc->filhos[0];
+    return suc->chaves[0]; // pegamos o ultimo elemento do vetor de chaves
 }
 
 //remove o numero de um vetor, diminui o numero de chaved do nodo (parametro n)
@@ -373,7 +384,7 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
             {
                 int32_t pred;  //guarda o predecessor do numero
                 pred = encontrarPred(x->filhos[i]);
-                x->chaves[i] = pred; 
+                x->chaves[i] = pred;
                 return excluirArvoreB(arvore, x->filhos[i], pred);
             }
             else //o filho direito tem o numero minimo de chaves
