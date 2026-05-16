@@ -350,6 +350,38 @@ static void remove_vetor(int32_t vetor[], int32_t chave, int *n )
     return;
 }
 
+struct nodo* irmaoImediatoComMaisChaves(struct nodo* x, int32_t i)
+{
+    //olhar pros vizinhos de x e verificar se algum deles pode emprestar uma chave
+    // vizinhos = [x-1] e [x+1]
+
+    if(x == nullptr)
+        return nullptr;
+
+    struct nodo* irmaoEsq;
+    struct nodo* irmaoDir;
+    struct nodo* atual = x->filhos[i]
+
+    if(i > 0)
+        irmaoEsq = x->filhos[i - 1];
+    else
+        irmaoEsq = nullptr;
+
+    if(i > x->n)
+        irmaoDir = x->filhos[i + 1];
+    else
+        irmaoDir = nullptr;
+
+    // se x[i-1] tiver mais chaves do que x[i] ele sera do irmaoImediatoComMaisChaves
+    if(irmaoEsq != nullptr && irmaoEsq->n > atual->n)
+        return irmaoEsq;
+    // se x[i+1] tiver mais chaves do que x[i], ele sera do irmaoImediatoComMaisChaves
+    if(irmaoDir != nullptr && irmaoDir->n > atual->n)
+        return irmaoDir;
+
+    return nullptr;
+}
+
 //faz o merge de dois nodos
 static void merge( struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t)
 {
@@ -382,10 +414,9 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
 
     int32_t i = 0;
 
+    // descobre em qual filho k esta
     while ( i<= x->n && chave > x->chaves[i])
-    {
         i++;
-    }
 
     if(i < x->n && chave == x->chaves[i]) // achou a chave, não tem só ela no vetor
     {
@@ -428,8 +459,6 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
                 }
             }
         }
-
-
     }
     else //chave nao encontrada ou a chave é única
     {
@@ -441,16 +470,18 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
             {
                 struct nodo *b;
                 b = irmaoImediatoComMaisChaves(x, i);
+                if(b == nullptr)
+                    // caso de nao ter irmao imediato, faz oq? pensar depois
                 if(b->n >= arvore->t_arvore)
                 {
-                    incluir_vetor(x->chaves[i], x->filhos[i]);
+                    incluir_vetor(x->filhos[i], x->chaves[i]);
                     if(b == x->filhos[i+1])
                     {
-                        incluir_vetor(); // nao entendi essa parte ainda ayuda
+                        incluir_vetor(x->chaves[1], b->chaves[1]); // nao entendi essa parte ainda ayuda
                     }
                     else
                     {
-                        incluir_vetor(); //tambem nao entend ayuda
+                        incluir_vetor(x->chaves[n - 1], b->chaves[b->n - 1]); //tambem nao entend ayuda
                     }
                 }
                 else
