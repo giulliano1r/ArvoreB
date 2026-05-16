@@ -328,10 +328,26 @@ static int encontrarSuc(struct nodo *suc)
     return suc->chaves[0]; // pegamos o ultimo elemento do vetor de chaves
 }
 
-//remove o numero de um vetor, diminui o numero de chaved do nodo (parametro n)
+//remove o numero de um vetor, diminui o numero de chaves do nodo (parametro n)
 static void remove_vetor(int32_t vetor[], int32_t chave, int *n )
 {
+    if(*n == 0 || n == nullptr)
+        return;
 
+    int i = 0;
+    while(i < *n - 1)
+    {
+        if(chave == vetor[i])
+        {
+            // substitui a chave no vetor
+            for(int j = i; j < *n - 1; j++)
+                vetor[j] = vetor[j + 1];
+            (*n)--;
+            return;
+        }
+        i++;
+    }
+    return;
 }
 
 //faz o merge de dois nodos
