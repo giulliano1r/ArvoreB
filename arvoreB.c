@@ -383,12 +383,18 @@ struct nodo* irmaoImediatoComMaisChaves(struct nodo* x, int32_t i)
 }
 
 //faz o merge de dois nodos
-static void merge( struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t)
+static void merge(struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t)
 {
 
 }
 
-static void incluir_vetor (int32_t chaves[], struct nodo *filhos[])
+// x = x->filhos[i] y = x
+void inclusaoDireita(struct nodo* x, struct nodo* y, int32_t i)
+{
+
+}
+
+void inclusaoEsquerda(struct nodo* x, struct nodo* y, int32_t i)
 {
 
 }
@@ -474,14 +480,16 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
                     // caso de nao ter irmao imediato, faz oq? pensar depois
                 if(b->n >= arvore->t_arvore)
                 {
-                    incluir_vetor(x->filhos[i], x->chaves[i]);
+
+                    x->filhos[i]->n = n + 1;
+
                     if(b == x->filhos[i+1])
                     {
-                        incluir_vetor(x->chaves[1], b->chaves[1]); // nao entendi essa parte ainda ayuda
+                        inclusaoDireita(); // nao entendi essa parte ainda ayuda
                     }
                     else
                     {
-                        incluir_vetor(x->chaves[n - 1], b->chaves[b->n - 1]); //tambem nao entend ayuda
+                        inclusaoEsquerda(); //tambem nao entend ayuda
                     }
                 }
                 else
