@@ -389,14 +389,46 @@ static void merge(struct nodo* filho1, struct nodo* filho2, int32_t chave, int32
 }
 
 // x = x->filhos[i] y = x
-void inclusaoDireita(struct nodo* x, struct nodo* y, int32_t i)
-{
-
-}
-
 void inclusaoEsquerda(struct nodo* x, struct nodo* y, int32_t i)
 {
+    if(x == nullptr || b == nullptr)
+        return;
 
+    struct nodo* xf = x->filhos[i];
+
+    // nodo com o minimo de chaves(xf) recebe uma chave do pai(x)
+    xf->chaves[xf->n] = x->chaves[i];
+    xf->n++;
+
+    // substituimos a chave que desceu anteriormente pelo y, entao
+    // fazemos o shift<<< para nao ficar com espaco "vazio"
+    x->chaves[i] = y->chaves[0];
+    for (int32_t j = 0; j < y->n - 1; j++) {
+        y->chaves[j] = y->chaves[j + 1];
+    }
+    y->n--;
+}
+
+void inclusaoDireita(struct nodo* x, struct nodo* y, int32_t i)
+{
+    if(x == nullptr || y == nullptr)
+        return;
+
+    struct nodo* xf = x->filhos[i];
+
+    // empurramos as chaves para direita, liberando espaco no
+    // primeiro slot do vetor
+    for (int32_t j = xf->n; j > 0; j--) {
+        xf->chaves[j] = xf->chaves[j - 1];
+    }
+
+    // nodo com o minimo de chaves(xf) recebe uma chave do pai(x)
+    xf->chaves[0] = x->chaves[i - 1];
+    xf->n++;
+
+    // subimos a ultima chave de y
+    x->chaves[i - 1] = y->chaves[y->n - 1];
+    y->n--;
 }
 
 bool removerChaveArvoreB(struct arvoreB* arvore, int32_t chave)
@@ -477,7 +509,7 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
                 struct nodo *b;
                 b = irmaoImediatoComMaisChaves(x, i);
                 if(b == nullptr)
-                    // caso de nao ter irmao imediato, faz oq? pensar depois
+
                 if(b->n >= arvore->t_arvore)
                 {
 
@@ -485,11 +517,11 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
 
                     if(b == x->filhos[i+1])
                     {
-                        inclusaoDireita(); // nao entendi essa parte ainda ayuda
+                        inclusaoDireita();
                     }
                     else
                     {
-                        inclusaoEsquerda(); //tambem nao entend ayuda
+                        inclusaoEsquerda();
                     }
                 }
                 else
