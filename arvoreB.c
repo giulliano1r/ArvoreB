@@ -388,7 +388,8 @@ static void merge(struct nodo* filho1, struct nodo* filho2, int32_t chave, int32
 
 }
 
-// x = x->filhos[i] y = x
+// funcao responsavel por fazer a passagem de chaves para um nodo esquedo
+// com o minimo de chaves
 void inclusaoEsquerda(struct nodo* x, struct nodo* y, int32_t i)
 {
     if(x == nullptr || b == nullptr)
@@ -409,6 +410,8 @@ void inclusaoEsquerda(struct nodo* x, struct nodo* y, int32_t i)
     y->n--;
 }
 
+// funcao responsavel por fazer a passagem de chaves para um nodo direito
+// com o minimo de chaves
 void inclusaoDireita(struct nodo* x, struct nodo* y, int32_t i)
 {
     if(x == nullptr || y == nullptr)
@@ -512,17 +515,10 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
 
                 if(b->n >= arvore->t_arvore)
                 {
-
-                    x->filhos[i]->n = n + 1;
-
                     if(b == x->filhos[i+1])
-                    {
-                        inclusaoDireita();
-                    }
+                        inclusaoDireita(x,b,i);
                     else
-                    {
-                        inclusaoEsquerda();
-                    }
+                        inclusaoEsquerda(x,b,i);
                 }
                 else
                 {
