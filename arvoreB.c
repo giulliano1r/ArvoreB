@@ -302,11 +302,10 @@ void deletarArvore(struct arvoreB* arvore)
 
     deleta_nodo(arvore->raiz);
     free(arvore);
-
 }
 
 //encontra o maior numero dos filhos
-static int encontrarPred(struct nodo *pred)
+static int32_t encontrarPred(struct nodo *pred)
 {
     if(pred == nullptr)
         return -1;
@@ -318,7 +317,7 @@ static int encontrarPred(struct nodo *pred)
 }
 
 //encontra o menor numero dos filhos
-static int encontrarSuc(struct nodo *suc)
+static int32_t encontrarSuc(struct nodo *suc)
 {
     if(suc == nullptr)
         return -1;
@@ -329,18 +328,18 @@ static int encontrarSuc(struct nodo *suc)
 }
 
 //remove o numero de um vetor, diminui o numero de chaves do nodo (parametro n)
-static void remove_vetor(int32_t vetor[], int32_t chave, int *n )
+static void removeDoVetor(int32_t vetor[], int32_t chave, int32_t *n )
 {
     if(*n == 0 || n == nullptr)
         return;
 
-    int i = 0;
+    int32_t i = 0;
     while(i < *n - 1)
     {
         if(chave == vetor[i])
         {
             // substitui a chave no vetor
-            for(int j = i; j < *n - 1; j++)
+            for(int32_t j = i; j < *n - 1; j++)
                 vetor[j] = vetor[j + 1];
             (*n)--;
             return;
@@ -383,9 +382,42 @@ struct nodo* irmaoImediatoComMaisChaves(struct nodo* x, int32_t i)
 }
 
 //faz o merge de dois nodos
-static void merge(struct nodo* filho1, struct nodo* filho2, int32_t chave, int32_t t)
+static void merge(struct nodo* x, struct nodo* b, int32_t chave, int32_t i)
 {
+    if(x == nullptr || y == nullptr)
+        return;
 
+    struct nodo* xf = x->filhos[i];
+
+    xf->chaves[xf->n] = chave;
+    xf->n++;
+
+    // alterar xf
+
+    // copia as chaves de b para xf
+    for(int32_t j = 0; j < b->n - 1; j++)
+    {
+        xf->chaves[xf->n] = b->chaves[j];
+        xf->n++;
+    }
+
+    // copia os filhos de b para o final de xf
+    if(!xf->ehFolha)
+        for (int32_t k = 0; k <= b->n; k++)
+            xf->filhos[(xf->n - b->n) + k] = b->filhos[k]; // (xf.n - b.n) é o indice dos filhos de xf
+
+    //  alterar x
+
+    // shift<<< para preencher o espaco vazio de x
+    for (int32_t k = i; k < x->n - 1; k++)
+        x->chaves[k] = x->chaves[k + 1];
+
+    // faz o mesmo para os filhos
+    for (int32_t k = i + 1; k < x->n; k++)
+        x->filhos[k] = x->filhos[k + 1];
+    x->n--;
+
+    deleta_nodo(b);
 }
 
 // funcao responsavel por fazer a passagem de chaves para um nodo esquedo
@@ -463,7 +495,7 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
     {
         if(x->filhos == nullptr) // se for uma folha, só remove a chave do vetor
         {
-            remove_vetor(x->chaves, chave, &x->n);
+            removeDoVetor(x->chaves, chave, &x->n);
             return 1;
         }
         else //eh um nó interno
@@ -486,7 +518,7 @@ int32_t excluirArvoreB(struct arvoreB* arvore, struct nodo *x, int32_t chave)
                 }
                 else // nenhum dos filhos tem o numero minimo de chaves
                 {
-                    remove_vetor(x->chaves, chave, &x->n);
+                    removeDoVetor(x->chaves, chave, &x->n);
                     merge(x->filhos[i], x->filhos[i+1], chave, arvore->t_arvore);
                     deleta_nodo(x->filhos[i+1]);
                     excluirArvoreB(arvore, x->filhos[i], chave);
