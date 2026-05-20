@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -std=c23 -Wall -Wextra -Werror
+CFLAGS = -std=c2x -Wall -Wextra -Werror
 TARGET = prova1_20244503_20245106
 OBJS = arvoreB.o fila.o main.o
 

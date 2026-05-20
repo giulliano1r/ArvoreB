@@ -1,4 +1,4 @@
-#include <stdio.h>
+/*#include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "arvoreB.h"
@@ -36,5 +36,31 @@ int main()
     deletarArvore(a);
     a = nullptr;
     imprimirArvoreB(a);
+    return 0;
+}*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include "arvoreB.h"
+#include "fila.h"
+int main()
+{
+    struct arvoreB *a = criarArvoreB(3);
+    
+    // Apenas 3 inserções
+    inserirArvoreB(a, 10);
+    inserirArvoreB(a, 20);
+    inserirArvoreB(a, 30);
+    
+    printf("Antes: ");
+    imprimirEmOrdem(a);
+    
+    printf("\nRemovendo 20: ");
+    removerChaveArvoreB(a, 20);
+    
+    printf("Depois: ");
+    imprimirEmOrdem(a);
+    
+    deletarArvore(a);
     return 0;
 }

@@ -10,8 +10,8 @@
 #define nullptr NULL
 
 struct nodo {
-    int n;
-    int chaves[2 * GRAU_MINIMO - 1];
+    int32_t n;
+    int32_t chaves[2 * GRAU_MINIMO - 1];
     struct nodo *filhos[2 * GRAU_MINIMO];
     bool ehFolha;
 };
@@ -26,7 +26,7 @@ void inserirArvoreB(struct arvoreB* arvore, int32_t chave);
 void imprimirArvoreB(struct arvoreB* arvore);
 void imprimirEmOrdem(struct arvoreB* arvore);
 struct nodo* buscarArvoreB(struct arvoreB* arvore, int32_t chave, int32_t* idxEncontrado);
-bool removerChaveArvoreB(union ou struct arvoreB* arvore, int32_t chave);
+bool removerChaveArvoreB(struct arvoreB* arvore, int32_t chave);
 void deletarArvore(struct arvoreB* arvore);
 
 #endif
