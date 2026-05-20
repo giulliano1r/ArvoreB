@@ -367,7 +367,7 @@ struct nodo *irmaoImediatoComMaisChaves(struct nodo *x, int32_t i)
     else
         irmaoDir = nullptr;
 
-    // se x[i-1] tiver mais chaves do que x[i] ele sera do irmaoImediatoComMaisChaves
+    //se esquerdo tem mais ou igual chaves, retorna o esquerdo, senao, o direito
     if (irmaoEsq != nullptr && irmaoDir != nullptr)
         return (irmaoEsq->n >= irmaoDir->n) ? irmaoEsq : irmaoDir;
 
@@ -397,77 +397,70 @@ static void merge(struct nodo *esq, struct nodo *dir, int32_t chave)
         esq->n++;
     }
 
-    if (esq->filhos != nullptr && dir->filhos != nullptr)
+    if (!esq->ehFolha)
     {
         for (int32_t j = 0; j <= dir->n; j++)
             esq->filhos[n + j] = dir->filhos[j];
     }
 }
 
-// funcao responsavel por fazer a passagem de chaves para um nodo esquedo
-// com o minimo de chaves
+
 void inclusaoEsquerda(struct nodo *x, struct nodo *y, int32_t i)
 {
-    if (x == nullptr || y == nullptr)
+    if (x == nullptr || y == nullptr) 
         return;
 
     struct nodo *xf = x->filhos[i];
 
-    // nodo com o minimo de chaves(xf) recebe uma chave do pai(x)
-    xf->chaves[xf->n] = x->chaves[i - 1];
-    xf->n++;
+    //abre espaço
+    for (int32_t j = xf->n; j >0; j--)
+        xf->chaves[j] = xf->chaves[j- 1];
 
-    // substituimos a chave que desceu anteriormente pelo y, entao
-    // fazemos o shift<<< para nao ficar com espaco "vazio"
-    x->chaves[i - 1] = y->chaves[y->n - 1];
-    y->n--;
-
-    if (xf->filhos != nullptr && y->filhos != nullptr)
+    if (!xf->ehFolha)
     {
-        for (int32_t j = xf->n; j > 0; j--)
-            xf->filhos[j] = xf->filhos[j - 1];
-
-        xf->filhos[0] = y->filhos[y->n];
+        for (int32_t j = xf->n + 1; j > 0; j--)
+            xf->filhos[j] = xf->filhos[j- 1];
     }
+
+    //inclui a chave na primeira posicao
+    xf->chaves[0] = x->chaves[i -1];
+
+    if (!xf->ehFolha)
+        xf->filhos[0] = y->filhos[y->n];
+
+    x->chaves[i - 1] = y->chaves[y->n - 1];
+
+    xf->n++;
+    y->n--;
 }
 
-// funcao responsavel por fazer a passagem de chaves para um nodo direito
-// com o minimo de chaves
+
 void inclusaoDireita(struct nodo *x, struct nodo *y, int32_t i)
 {
-    if (x == nullptr || y == nullptr)
+    if (x == nullptr || y == nullptr) 
         return;
 
     struct nodo *xf = x->filhos[i];
 
-    // empurramos as chaves para direita, liberando espaco no
-    // primeiro slot do vetor
-    for (int32_t j = xf->n; j > 0; j--)
-    {
-        xf->chaves[j] = xf->chaves[j - 1];
-    }
+    xf->chaves[xf->n] = x->chaves[i];
 
-    // nodo com o minimo de chaves(xf) recebe uma chave do pai(x)
-    xf->chaves[0] = x->chaves[i];
-    xf->n++;
+    if (!xf->ehFolha)
+        xf->filhos[xf->n + 1] = y->filhos[0];
 
     x->chaves[i] = y->chaves[0];
 
-    for (int32_t j = 0; j < y->n - 1; j++)
+    //puxa para a esquerda
+    for (int32_t j =0; j < y->n - 1; j++)
         y->chaves[j] = y->chaves[j + 1];
 
-    y->n--;
-
-    if (xf->filhos != nullptr && y->filhos != nullptr)
+    if (!y->ehFolha)
     {
-        for (int32_t j = xf->n; j > 0; j--)
-            xf->filhos[j] = xf->filhos[j + 1];
-
-        xf->filhos[0] = y->filhos[0];
-
         for (int32_t j = 0; j < y->n; j++)
-            y->filhos[j] = y->filhos[j + 1];
+            y->filhos[j] = y->filhos[j +1];
     }
+
+    xf->n++;
+    y->n--;
 }
 
 int32_t excluirArvoreB(struct arvoreB *arvore, struct nodo *x, int32_t chave)
@@ -478,16 +471,17 @@ int32_t excluirArvoreB(struct arvoreB *arvore, struct nodo *x, int32_t chave)
         return 0;
     }
 
-    int32_t i = 0;
-
+    int32_t i =0;
     // descobre em qual filho k esta
     while (i < x->n && chave > x->chaves[i])
+    {
         i++;
-
+    }
+        
     if (i < x->n && chave == x->chaves[i]) // achou a chave
     {
         // a chave esta na folha
-        if (x->filhos == nullptr)
+        if (x->ehFolha == true)
         {
             removeDoVetor(x->chaves, chave, &x->n);
             return 1;
@@ -514,17 +508,18 @@ int32_t excluirArvoreB(struct arvoreB *arvore, struct nodo *x, int32_t chave)
                 else // nenhum dos filhos tem o numero minimo de chaves
                 {
                     merge(x->filhos[i], x->filhos[i + 1], chave);
+                    struct nodo *aux = x->filhos[i +1];
                     removeDoVetor(x->chaves, chave, &x->n);
 
                     for (int32_t j = i + 1; j <= x->n; j++)
                         x->filhos[j] = x->filhos[j + 1];
 
-                    deleta_nodo(x->filhos[i + 1]);
+                    free(aux);
 
                     if (x == arvore->raiz && x->n < 1)
                     {
                         arvore->raiz = x->filhos[0];
-                        deleta_nodo(x);
+                        free(x);
                     }
                     return 1;
                 }
@@ -534,57 +529,62 @@ int32_t excluirArvoreB(struct arvoreB *arvore, struct nodo *x, int32_t chave)
     else // chave nao encontrada no nó atual
     {
         // chave nao encontrada
-        if (x->filhos == nullptr)
+        if (x->ehFolha == true)
+        {
+            printf("Chave nao encontrada\n");
             return 0;
+        }
 
         if (x->filhos[i]->n <= arvore->t_arvore - 1)
         {
-            if (i < x->n && x->filhos[i + 1]->n >= arvore->t_arvore - 1)
+            struct nodo *b;
+            b = irmaoImediatoComMaisChaves(x, i);
+
+            if (b != nullptr && b->n >= arvore->t_arvore)
             {
-                struct nodo *b;
-                b = irmaoImediatoComMaisChaves(x, i);
+                if (b == x->filhos[i + 1])
+                    inclusaoDireita(x, x->filhos[i + 1], i);
 
-                if (b != nullptr && b->n >= arvore->t_arvore)
+                else if (b == x->filhos[i - 1])
+                    inclusaoEsquerda(x, x->filhos[i - 1], i);
+            }
+            else
+            {
+                if (i < x->n)
                 {
-                    if (b == x->filhos[i + 1])
-                        inclusaoDireita(x, x->filhos[i + 1], i);
+                    merge(x->filhos[i], x->filhos[i + 1], x->chaves[i]);
 
-                    else if (b == x->filhos[i - 1])
-                        inclusaoEsquerda(x, x->filhos[i - 1], i);
+                    struct nodo *aux = x->filhos[i +1];
+                    removeDoVetor(x->chaves, x->chaves[i], &x->n);
+
+                    for (int32_t j = i + 1; j <= x->n; j++)
+                        x->filhos[j] = x->filhos[j + 1];
+
+                    free(aux);
                 }
-                else
+
+                else if (i > 0)
                 {
-                    if (i < x->n)
-                    {
-                        merge(x->filhos[i], x->filhos[i + 1], x->chaves[i]);
-                        removeDoVetor(x->chaves, x->chaves[i], &x->n);
+                    i--;
+                    merge(x->filhos[i], x->filhos[i + 1], x->chaves[i]);
+                    removeDoVetor(x->chaves, x->chaves[i], &x->n);
 
-                        for (int32_t j = i + 1; j < x->n; j++)
-                            x->filhos[j] = x->filhos[j + 1];
+                    struct nodo *aux = x->filhos[i +1];
 
-                        deleta_nodo(x->filhos[i + 1]);
-                    }
+                    for (int32_t j = i + 1; j <= x->n; j++)
+                        x->filhos[j] = x->filhos[j + 1];
 
-                    else if (i > 0)
-                    {
-                        i--;
-                        merge(x->filhos[i], x->filhos[i + 1], x->chaves[i]);
-                        removeDoVetor(x->chaves, x->chaves[i], &x->n);
+                    free(aux);
+                }
 
-                        for (int32_t j = i + 1; j < x->n; j++)
-                            x->filhos[j] = x->filhos[j + 1];
-
-                        deleta_nodo(x->filhos[i + 1]);
-                    }
-
-                    if (x == arvore->raiz && x->n == 0)
-                    {
-                        arvore->raiz = x->filhos[0];
-                        deleta_nodo(x);
-                        return excluirArvoreB(arvore, arvore->raiz, chave);
-                    }
+                if (x == arvore->raiz && x->n == 0)
+                {
+                    arvore->raiz = x->filhos[0];
+                    free(x);
+                    return excluirArvoreB(arvore, arvore->raiz, chave);
                 }
             }
+            
         }
         return excluirArvoreB(arvore, x->filhos[i], chave);
     }

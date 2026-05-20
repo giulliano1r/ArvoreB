@@ -1,66 +1,53 @@
-/*#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include "arvoreB.h"
-#include "fila.h"
-
-int main()
-{
-    int x = 72;
-
-    struct arvoreB *a = criarArvoreB(5);
-    inserirArvoreB(a, 10);
-    inserirArvoreB(a, 13);
-    inserirArvoreB(a, 14);
-    inserirArvoreB(a, 9);
-    inserirArvoreB(a, 8);
-    inserirArvoreB(a, 7);
-    inserirArvoreB(a, 73);
-    inserirArvoreB(a, x);
-    inserirArvoreB(a, x);
-    inserirArvoreB(a, x);
-    inserirArvoreB(a, 71);
-    inserirArvoreB(a, 2);
-    inserirArvoreB(a, 1);
-    imprimirArvoreB(a);
-    imprimirEmOrdem(a);
-
-    int32_t i;
-    struct nodo *buscaAB = buscarArvoreB(a,79,&i);
-
-    if(buscaAB)
-        printf("\n Encontrou o %d no indice %d \n", x, i );
-    else
-        printf("\n Nao encontrou\n");
-
-    deletarArvore(a);
-    a = nullptr;
-    imprimirArvoreB(a);
-    return 0;
-}*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include "arvoreB.h"
 #include "fila.h"
+
 int main()
 {
-    struct arvoreB *a = criarArvoreB(3);
+    struct arvoreB *a = criarArvoreB(2);
     
-    // Apenas 3 inserções
-    inserirArvoreB(a, 10);
-    inserirArvoreB(a, 20);
-    inserirArvoreB(a, 30);
+    int teste[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int num_inserir = sizeof(teste) / sizeof(teste[0]);
+
+    for (int i = 0; i < num_inserir; i++) 
+        inserirArvoreB(a, teste[i]);
     
-    printf("Antes: ");
+
+    imprimirArvoreB(a); 
     imprimirEmOrdem(a);
+
+    int idx;
+    struct nodo *encontrado = buscarArvoreB(a, 60, &idx);
+    if (encontrado != nullptr) 
+        printf("Chave 60 encontrada no indice [%d]\n", idx);
+    else 
+        printf("Chave 60 nao encontrada\n");
     
-    printf("\nRemovendo 20: ");
+    // remocao na folha
+    printf("Chave : 100\n");
+    removerChaveArvoreB(a, 100);
+    imprimirArvoreB(a);
+
+    //remocao no interno
+    printf("Chave : 40\n");
+    removerChaveArvoreB(a, 40);
+    imprimirArvoreB(a);
+
+    // remocao com merge
+    printf("Chave : 10\n");
+    removerChaveArvoreB(a, 10);
+    printf("Chave : 20\n");
     removerChaveArvoreB(a, 20);
-    
-    printf("Depois: ");
+    imprimirArvoreB(a);
     imprimirEmOrdem(a);
-    
+
+    //a chave nao esta na arvore
+    printf("Chave : 100\n");
+    removerChaveArvoreB(a,100);
+
     deletarArvore(a);
+    printf("\nMemoria liberada\n");
     return 0;
 }
