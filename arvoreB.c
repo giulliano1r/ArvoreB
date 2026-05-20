@@ -357,12 +357,12 @@ struct nodo *irmaoImediatoComMaisChaves(struct nodo *x, int32_t i)
     struct nodo *irmaoEsq;
     struct nodo *irmaoDir;
 
-    if (i > 0)
+    if (i> 0)
         irmaoEsq = x->filhos[i - 1];
     else
         irmaoEsq = nullptr;
 
-    if (i < x->n)
+    if (i <x->n)
         irmaoDir = x->filhos[i + 1];
     else
         irmaoDir = nullptr;
@@ -371,10 +371,10 @@ struct nodo *irmaoImediatoComMaisChaves(struct nodo *x, int32_t i)
     if (irmaoEsq != nullptr && irmaoDir != nullptr)
         return (irmaoEsq->n >= irmaoDir->n) ? irmaoEsq : irmaoDir;
 
-    else if (irmaoEsq != nullptr)
+    else if (irmaoEsq!= nullptr)
         return irmaoEsq;
 
-    else if (irmaoDir != nullptr)
+    else if (irmaoDir !=nullptr)
         return irmaoDir;
 
     return nullptr;
@@ -453,6 +453,7 @@ void inclusaoDireita(struct nodo *x, struct nodo *y, int32_t i)
     for (int32_t j =0; j < y->n - 1; j++)
         y->chaves[j] = y->chaves[j + 1];
 
+    //se nao eh folha, trata os filhos
     if (!y->ehFolha)
     {
         for (int32_t j = 0; j < y->n; j++)
